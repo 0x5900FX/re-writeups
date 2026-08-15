@@ -24,6 +24,7 @@ RELRO           STACK CANARY      NX            PIE             RPATH      RUNPA
 Full RELRO      Canary found      NX enabled    PIE enabled     No RPATH   No RUNPATH   40 Symbols	  No	0		1	
 ```
 
+```
 Execute it on terminal
 
 Ask for password
