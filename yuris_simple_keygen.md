@@ -12,6 +12,7 @@ Approach
 
 Ran checksec & strings into binary. Not much useful info - no hardcoded serial, no obvious password string. This one's a real keygen, not a flat comparison.
 
+```
 Ran it once blind to see the prompt/format:
 
 ./SimpleKeyGen 1212121212121212
@@ -111,7 +112,22 @@ Good Serial
 Both confirm: any string of 8 repeated (X, X+1) pairs, 16 characters total, is valid.
 
 
+import random
+import string
 
+def make_serial():
+    chars = string.digits + string.ascii_letters
+    c1 = random.choice(chars[:-1])
+    c2 = chr(ord(c1) + 1)
+    return (c1 + c2) * 8
+
+print(make_serial())
+
+```
+
+
+This is my mess 
+```
 mov     [rbp+s], rdi
 mov     rax, [rbp+s]
 mov     rdi, rax        ; s
@@ -268,3 +284,4 @@ call    _strlen
 cmp     rbx, rax
 jb      short loc_11C6
 mov     eax, 0
+
