@@ -115,4 +115,4 @@ str2 = bytes(b ^ key for b in str1)
 print(str2)
 ```
 
-Here we get the key now
+Here we get the key now.
