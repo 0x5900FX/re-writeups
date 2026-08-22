@@ -167,6 +167,37 @@ Example - Strings
 • Third-party software libraries (OpenSSL, zlib) - MDS part of OpenSSL 1. 0. 2q 20 Nov 2018
 • Keylogger-related strings------ [DELETE], [BS] , [SHIFT]
 
+Narrow string is 0ne bytes
+Wide string is 2 bytes ( used by windows and its encoding standard is UTF-16 LE )
+Narrow string ends with 0x00 while wide one are terminated with double NULL (0x00, 0x00)
+Microsoft’s encoding standard is UTF-16 LE
+
+
+Tools
+strings.exe (Sysinternals)
+/usr/bin/strings (Linux)
+
+Malware authors routinely encrypt, obfuscate, or encode strings that have forensic significance to
+investigators
+• Common encoding methods:
+o Hexadecimal
+o XOR
+o Base64
+
+```
+
+### Encoding
+```
+Encoding – Hexadecimal
+
+binary-to-text encoding where each byte is represented by two hexadecimal digits
+Hexadecimal digits: 0123456789ABCDEF (not case sensitive) (HEX)
+Example for GET req using HEX
+
+GET  /chk?75 73 65 72 6E 61 6D 65
+          u  s  e  r  n  a  m  e       
+
+Can use ASCII to view the ascii table for easy review / comparision.
 ```
 
 ```
