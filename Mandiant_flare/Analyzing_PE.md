@@ -17,7 +17,7 @@ DLLs offer malware authors greater flexibility in deploying their malware
 
 
 ```
-![alt text](image.png)
+![alt text](Mandant_images/image.png)
 
 ```
 PE File Format – Headers and Sections
@@ -78,6 +78,94 @@ user32 -> UI / keyboard function / window draw & interaction
 w2_32 -> low level networking function ( sockets ).
 wininet -> high level networking function ( http , ftp ) 
 
-```
-![alt text](image-1.png)
 
+PE File Format – Import Table
+
+The Windows loader locates libraries listed in the Import Table and maps them into process memory
+Grouped by modules
+Functionality may be inferred by examining a sample’s imports:
+o CreateProcessA
+o RegSetValueA
+o URLDownloadToFileA
+
+Many Windows functions have peculiar names
+o MSDN Library
+o Appendix A of Practical Malware Analysis
+Can be imported by name or ordinal
+```
+![alt text](Mandant_images/image-1.png)
+
+
+```
+PE File Format – Export Table
+
+Export Table contains a list of functions that other applications can import
+o For example, the CreateFileA function is exported by kernel32.dll
+
+
+Linking
+Library code can be linked statically or dynamically
+
+Static Linking
+o The linker creates a copy of all supporting code and inserts it directly into the compiled executable
+o Creates very large executables that are difficult to analyze without symbol information (e.g., OpenSSL ) 
+
+Load-time Dynamic Linking
+o The program imports functions from DLLs via its import table
+o The program cannot run if DLL dependencies are missing
+
+Run-time Dynamic Linking
+o The program loads an external library and resolves the functions it requires
+▪ Look for calls to LoadLibrary or GetModuleHandle and GetProcAddress
+o Used regularly by malware to hinder static analysis and required for reliable shellcode payloads
+
+
+Packing
+• Packing involves compressing or obfuscating a PE and storing it inside an executable whose purpose is to
+unpack and execute the original sample.
+
+AV alerts on packed PE's
+Deter static analysis and RE
+
+
+Identifying packed Samples
+few / none human readable strings
+Only contain Handful of imort api 
+Unusual section names
+Sections with a Raw Size of zero
+
+Tools to detect & identinfying packers
+
+PEid
+DIE
+CFF exploler 
+
+
+Unpacking 
+Rebuilding the original PE from the packed version.
+
+Tools for automatic unpacking
+o CFF Explorer
+o upx command line tool
+
+Packed PE's must be manually unpacked & rebuilt.
+
+UPX
+• UPX is packing software commonly used by malware authors
+▪ upx –d <input_filename> -o <output_filename>
+
+CFF exploler can also support unpacking UPX samples
+UPX Utility
+If "Unpack" box is active, then CFF can unpack the sample
+
+CAPA
+• Uses a collection of rules to identify capabilities within a program
+• Verbose mode reveals code locations for Advanced Static Analysis (-vv)
+
+```
+
+![alt text](Mandant_images/image-2.png)
+
+```
+
+```
