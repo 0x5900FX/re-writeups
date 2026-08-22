@@ -34,4 +34,50 @@ Section stores:
 - Program data
 - Resources
 
+
+PE FILE format -DOS Header 
+
+o Contains “MZ” file signature
+o Stores the offset to the PE header
+o 16-bit DOS stub program
+
+Rich header => compiler generated
+optional / metadata
+used by malware auth for -> config data  storage.
+
+
+Section Header 
+Each pe sectoin has it's own section header entry.
+
+Section names are arbitrary but typically follow a common naming convention 
+(e.g., “.text”, “.data”, “.rdata”)
+
+
+- Raw Size value indicates the size of the section as stored on disk
+- Virtual Size value indicates the size of the section in memory
+- Raw Address is the section offset relative to the beginning of the file
+- Virtual Address is the section offset relative to the beginning of the file stored in memory
+- Characteristics indicate if the section is readable, writable, or contains executable code
+
+
+.text  -> executable code of program
+.rdata -> read-only data accecible by program. Used to sotre imp/exp addr table.
+.data -> contain initialized data that can be changed by program by execution.
+.rsrc -> secion used to store support files used by program.
+.reloc -> contain table address fixup allowing PE file to be relocated to another base address by Win loader.
+
+
+PE File Format – Import Address Table
+Import Address Table (IAT) contains the names of external modules (DLLs) required by the program in
+order to execute
+Functionality provided by common Windows DLLs
+
+kernel32 ->  MainWin32 API lib ->contain function for file sys operation / sys config / progcess / thread / mem mgmt
+advapi32 -> registry interaction / win service / security & crypto API
+user32 -> UI / keyboard function / window draw & interaction
+w2_32 -> low level networking function ( sockets ).
+wininet -> high level networking function ( http , ftp ) 
+
 ```
+![alt text](image-1.png)
+
