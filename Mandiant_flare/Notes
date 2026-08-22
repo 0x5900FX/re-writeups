@@ -198,6 +198,50 @@ GET  /chk?75 73 65 72 6E 61 6D 65
           u  s  e  r  n  a  m  e       
 
 Can use ASCII to view the ascii table for easy review / comparision.
+
+
+Encoding - Base64
+
+
+Binary-to-text encoding scheme where data is represented using 64 printable characters. 
+o Alphabet: ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/
+o Uses the character '=' to pad the end of strings
+Can easily identify Base64 enc by looking out for string ending with  "=" or "==".
+Used mainly in http / smtp protocols.
+JS & powershell script malicious are usually in base64 format.
+R1JFQVQgRVhBTVBMRQ==
+
+
+
+Encoding – XOR
+
+
+• A binary logic operation commonly used by malware to obfuscate data
+Equ  to "Either-or but not both" in a single bit
+Used in cryptographic algorithms . -> Reversible
+ ' ^ ' used for XOR operation.
+Key can be single / multiple bytes.
+
+unlike prev this enc can produce XOR data.
+
+data key encoded
+D   K   E
+0 ^ 0 = 0 
+0 ^ 1 = 1
+1 ^ 0 = 1
+1 ^ 1 = 0
+
+org = key ^ enc
+0 = 0 ^ 0 
+0 = 1 ^ 1 
+1 = 0 ^ 0 
+1 = 1 ^ 1 
+
+
+
+
+0
+
 ```
 
 ```
