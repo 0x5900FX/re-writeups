@@ -1,0 +1,172 @@
+Notes For Mandiant
+
+Malware Analysis Fundamentals
+
+By FLARE
+
+
+## Malware Analysis
+
+```
+Disecting malicious software to understand 
+How it Works , identify & eliminate it
+
+IOC:
+
+```
+
+---
+
+```
+Host-based indicators (HBIs) describe artifacts found on a host that identify malicious activity.
+Unique about samples like :
+
+o File characteristics – size, hashes, names
+o Characteristics unique to the binary – strings, PDB paths
+o Changes made to the system – registry keys, created files, created directories
+o Other changes made to the system – named mutexes, started processes
+
+
+File System:
+Persistance
+Drop configuration files
+Store infomation from system
+
+o %APPDATA%\updatesvc.exe
+o C:\Windows\System32\kernel32.dll
+
+HBIs – Registry Paths/Keys
+
+• The Windows registry stores configuration data for the system and its applications
+
+Eg:
+o HKEY_CURRENT_USER\Microsoft\Windows\CurrentVersion\Run
+o HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services
+
+
+HBIs - Mutex
+
+An operating system construct that is designed to synchronize access to a resource.
+Used by malware to prevent multiple instances of itself executing at the same time
+
+o Global\
+o Local\
+
+o Global\4cafb85112364d776a04862aaa4371a0
+
+
+```
+
+---
+
+```
+Network Based indicators
+
+Communication With C2 server .
+Domain & IP addrs
+Protocols & ports used
+Headers used 
+Unique signatures, patterns, or data structures
+
+Network Communication
+
+To locate the server, the malware uses either:
+o Domain name - example.com
+o IP address - 192.168.0.1
+
+NBIs – HTTP Headers
+The HTTP User-Agent is a string that identifies various details that may include:
+o Browser type – (Firefox, Chrome, Safari, etc.)
+o Version
+o Operating system
+o Architecture
+
+o Mozilla/5.0 (Windows NT 6.1; WOW64; rv:40.0) Gecko/20100101 Firefox/40.1
+
+
+```
+---
+
+
+```
+Basic Analysis
+
+o Basic Static Analysis – examining an executable file without viewing the actual instructions
+
+
+o Basic Dynamic Analysis – observing malware behavior in a controlled environment
+
+```
+
+## Lesson 2: Basic Static Analysis
+
+```
+Extracrting meaningful characterstics from an unknown binary without execution.
+
+- Hashes
+- Strings 
+- OSINT
+- PE File formats
+- Packing 
+
+Hashing :
+Generate a unique value to identify a file.
+Any small cheange will lead to chagne in hashvalue of a file.
+one-way cryptographic function - >   | inp -> hash |
+
+Most widely accepted algorithm -> SHA-256
+MD5  , SHA-1   are cryptographically broken now but sometime used as checksums values
+Vendors continue to track malware samples by their MD5 hash value
+
+Hashing tools
+- hashmyfiles
+- sigcheck.exe (sysinternals)
+- Ctf exploler & PE analysis value
+
+Examples:
+Sysinternals - www.sysinternals.com
+
+c:\users\flare\documents\malware samples\eb0d18828cbd76d92a2577259a0946a40bc93b251f782c00e8cb59236d5f7953\FlawedAmmyy.exe:
+        Verified:       Unsigned
+        Link date:      8:07 AM 9/3/2004
+        Publisher:      n/a
+        Company:        n/a
+        Description:    n/a
+        Product:        n/a
+        Prod version:   n/a
+        File version:   n/a
+        MachineType:    32-bit
+
+
+
+Strings
+Compiled binaries contain sequences of human-readable characters
+
+We can get the followings:
+o Filenames
+o Registry paths/keys
+o PDB strings
+o Service configuration info
+o HTTP User-Agent strings
+o Domain names, IP addresses, URLs
+o Command-line help and usage options
+o Debugging messages
+o Function names
+o Third-party software libraries (OpenSSL, zlib)
+o Keylogger-related strings (e.g., "[DELETE]", "[BS]", "[SHIFT]")
+
+
+Example - Strings
+• Filenames ------------malware.dll
+• Registry paths/keys SOFTWARE\Microsoft\Windows\CurrentVersion\Run
+• PDB strings E: \windows \dropperNew\Debug\ testShellcode . pdb
+• Domain names, IP addresses, URLs evil. com, 192 . 168. 0. 2, evil. com/payload. exe
+• Command-line help and usage options Usage: evil. exe host port
+• Debugging messages Error: Unable to download file
+• Function names----------encrypt_payload
+• Third-party software libraries (OpenSSL, zlib) - MDS part of OpenSSL 1. 0. 2q 20 Nov 2018
+• Keylogger-related strings------ [DELETE], [BS] , [SHIFT]
+
+```
+
+```
