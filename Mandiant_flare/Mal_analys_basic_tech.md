@@ -237,11 +237,72 @@ org = key ^ enc
 1 = 0 ^ 0 
 1 = 1 ^ 1 
 
+XOR key leakage
+
+Any byte XORed with zero is equal to byte  ( x ^  00 = X)
+Byte XORed with itself is equal to zero ( X ^ X == 0)
+Most files contain blocks of null (zero) bytes that can reveal the key
+
+CyberChef 
+
+useful for common data transformation using drag & drop
+o Supports common data encoding and encryption schemes
 
 
+Can perform the followings  
 
-0
+
+CyberChef Tips
+Data type conversion
+• From Hex / To Hex – Convert data to/from hex and ASCII
+• To Hexdump – Display hex value of data with ASCII interpretation
+• Decode Text – Convert character encoding
+
+Encoding/Decoding
+• From Base64 / To Base64
+• XOR / XOR Brute Force
+
+
+Text manipulation
+• Split – Separate data based on delimiter
+• Find/Replace – Replace (or remove) repeated data values
+• Remove Whitespace – Eliminate new lines, tabs, spaces
+
+FLOSS – FLARE Obfuscated String Solver
+Exposes encrypted / encoded strings
+Utilizes heuristics and emulation
+floss evil.exe > floss_output.txt
+
+C:\Users\flare\Desktop>C:\Tools\FLOSS\floss.exe "C:\Users\flare\Documents\Malware Samples\eb0d18828cbd76d92a2577259a0946a40bc93b251f782c00e8cb59236d5f7953\FlawedAmmyy.exe" > flawed_text.txt
+INFO: floss: extracting static strings
+finding decoding function features: 100%|███████████████████| 5/5 [00:00<?, ? functions/s, skipped 0 library functions]
+INFO: floss.stackstrings: extracting stackstrings from 5 functions
+extracting stackstrings: 100%|███████████████████████████████████████████████████| 5/5 [00:00<00:00, 80.27 functions/s]
+INFO: floss.tightstrings: extracting tightstrings from 0 functions...
+extracting tightstrings: 0 functions [00:00, ? functions/s]
+INFO: floss.string_decoder: decoding strings
+emulating function 0x402000 (call 1/1): 100%|████████████████████████████████████| 5/5 [00:00<00:00, 63.96 functions/s]
+INFO: floss: finished execution after 4.30 seconds
+INFO: floss: rendering results
+
 
 ```
 
+
+
+Open-Source Intelligence
+```
+VirusTotal
+Can be a valuable source of information for investigators
+But also Malware authors are known to use VT to test their malware builds
+
+OPSEC
+VT tracks where samples are uploaded from
+Always start with the MD5 lookup feature
+Offers a public (free) and private (paid) API
+
+Google
+o Unique strings
+o Hashes
+o Malware family
 ```
