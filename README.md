@@ -1,57 +1,90 @@
-# Reverse Engineering / Crackme Write-ups
- 
-Personal log of crackme solves and reverse engineering practice, working toward
-malware analysis and Flare-On 2026.
- 
-Tools: IDA Pro, x64dbg, REMnux, FlareVM, Python.
- 
-> **Note on spoilers:** methodology and reasoning are shown in full; final
-> passwords/flags/keys are redacted per crackmes.one etiquette. Process is
-> shareable, answers are not.
- 
-## Progress log
- 
-| # | Name | Source | Difficulty | Technique | Write-up |
-|---|------|--------|------------|-----------|----------|
-| 1 | muhemed crackme | crackmes.one | — | Password hardcoded as raw hex immediates (`mov reg, <hex>`), decoded via little-endian byte reversal | [crackmes/muhemed_crackme.md](crackmes/muhemed_crackme.md) |
-| 2 | [name TBD] | crackmes.one | 1.0 | Plaintext password recoverable via `strings`, confirmed via `strcmp` in disassembly | [crackmes/name_tbd.md](crackmes/name_tbd.md) |
-| 3 | easyAF | crackmes.one (476f64) | 1.0 | `std::string::operator==` comparison against a literal | [crackmes/easyaf_476f64.md](crackmes/easyaf_476f64.md) |
-| 4 | easy_reverse | crackmes.one (476f64) | 1.0 | `Requires check to pass then get flag. Need to ensure that it's fullfilled` | [crackmes/easyaf_476f64.md](crackmes/easyaf_476f64.md) |
- 
-## Repo structure
- 
-```
+# Reverse Engineering Write-ups
+
+This repository contains my reverse engineering notes, crackme walkthroughs, and malware-analysis practice. It is organized by challenge set so the content is easier to browse and review.
+
+## Repository structure
+
+```text
 re-writeups/
 ├── README.md
-└── crackmes/
-    ├── muhemed_crackme.md
-    ├── really_easy_elzooms.md
-    ├── easy_reverse.md
-    └── easyaf_476f64.md
-
+├── crackmes/
+│   ├── crackme1_by_broken.md
+│   ├── easyaf_476f64.md
+│   ├── easy_reverse.md
+│   ├── muhemed_crackme.md
+│   ├── really_easy_elzooms.md
+│   ├── secret_key.md
+│   ├── terratist_pin_exe.md
+│   └── yuris_simple_keygen.md
+├── Flare-2014_writeups/
+│   ├── challenge_1.md
+│   └── challenge_2.md
+└── Mandiant_flare/
+    ├── Analyzing_PE.md
+    ├── Flare-flash_quiz.md
+    ├── Mal_analys_basic_tech.md
+    ├── Mandant_images/
+    └── Labs/
+        └── Static_analysis_L1.md
 ```
- 
-## Skills exercised so far
- 
-- Static analysis workflow: `checksec` → `strings` → IDA (decompiler + raw disassembly)
-- Recognizing hardcoded secrets embedded as immediate values vs. `.rodata` string references
-- Little-endian byte-order decoding by hand
-- Reading C++ name-mangled symbols and `std::string`/iostream call patterns in disassembly
-- Locating win/fail branches via `cmp`/`test` + conditional jump tracing
-## C fundamentals (source-to-assembly round-trip practice)
- 
-Parallel practice compiling small C programs at `-O0` and manually tracing the
-resulting disassembly in IDA, to build fluency reading compiler-generated code
-before tackling unlabeled binaries.
- 
-Covered: variables/arithmetic, conditionals/loops, arrays/pointers,
-strings/buffers (incl. a hands-on stack buffer overflow + stack canary
-demonstration), structs and memory alignment, function pointers /indirect
-calls, and heap allocation.
- 
-## Up next
- 
-- More easy-tier crackmes (plain C preferred over C++ while still building speed)
-- Algorithm-recognition practice (XOR, base64, checksums) ahead of Flare-On 2026
-- Flare-On 2026 (starts ~Sept 24)
+
+## Write-up index
+
+### Crackmes
+
+- [crackme1_by_broken.md](crackmes/crackme1_by_broken.md)
+- [easyaf_476f64.md](crackmes/easyaf_476f64.md)
+- [easy_reverse.md](crackmes/easy_reverse.md)
+- [muhemed_crackme.md](crackmes/muhemed_crackme.md)
+- [really_easy_elzooms.md](crackmes/really_easy_elzooms.md)
+- [secret_key.md](crackmes/secret_key.md)
+- [terratist_pin_exe.md](crackmes/terratist_pin_exe.md)
+- [yuris_simple_keygen.md](crackmes/yuris_simple_keygen.md)
+
+### Flare 2014
+
+- [challenge_1.md](Flare-2014_writeups/challenge_1.md)
+- [challenge_2.md](Flare-2014_writeups/challenge_2.md)
+
+### Mandiant / Flare training
+
+- [Analyzing_PE.md](Mandiant_flare/Analyzing_PE.md)
+- [Flare-flash_quiz.md](Mandiant_flare/Flare-flash_quiz.md)
+- [Mal_analys_basic_tech.md](Mandiant_flare/Mal_analys_basic_tech.md)
+- [Labs/Static_analysis_L1.md](Mandiant_flare/Labs/Static_analysis_L1.md)
+
+## Progress status
+
+| Category | Item | Status | Notes |
+|----------|------|--------|-------|
+| Crackme | muhemed_crackme | Complete | Basic static analysis and decode practice |
+| Crackme | easyaf_476f64 | Complete | String comparison / simple reversing |
+| Crackme | easy_reverse | Complete | String Comparision |
+| Crackme | really_easy_elzooms | Complete | TBD |
+| Crackme | secret_key | Complete | TBD |
+| Crackme | terratist_pin_exe | Complete | TBD |
+| Crackme | yuris_simple_keygen | Complete | TBD |
+| Crackme | crackme1_by_broken | Complete | TBD |
+| Flare 2014 | challenge_1 | In progress | Review and complete notes |
+| Flare 2014 | challenge_2 | Planned | TBD |
+| Mandiant / Flare | Analyzing_PE | Complete | PE fundamentals review |
+| Mandiant / Flare | Flare-flash_quiz | Complete | Notes captured |
+| Mandiant / Flare | Mal_analys_basic_tech | Complete | Basic malware analysis concepts |
+| Mandiant / Flare | Static_analysis_L1 | In progress | Continue lab notes |
+
+## Notes
+
+- This repo is mainly for learning and documenting malware analysis / reverse engineering workflows.
+- Some write-ups focus on crackmes, while others cover PE analysis and reverse engineering fundamentals.
+- The structure is kept simple so files can be found quickly without digging through nested content.
+
+## Tools used
+
+- IDA Pro
+- x64dbg
+- Ghidra
+- checksec
+- strings
+- Python
+- REMnux / FlareVM (when applicable)
  
