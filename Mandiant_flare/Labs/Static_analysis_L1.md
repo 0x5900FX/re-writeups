@@ -4,79 +4,115 @@ Lab - shadyrabbit.exe
 
 Static Analysis
 
-File:     Shadyrabbit.exe
-Size:     441899
-MD5:      FBBDC39AF1139AEBBA4DA004475E8839
-Compiled: Sun, Oct 22 2017, 2:33:58 - 32 Bit EXE
-Version:  27,0,0,170
+File:     shadyrabbit.exe
+Size:     56497
+MD5:      CD2CBA9E6313E8DF2C1273593E649682
+Compiled: Wed, Feb 23 2011, 17:31:59 - 32 Bit EXE
+Version:  1, 0, 0, 1
 
-Resources: 10 - 28808 bytes
-Signature Corrupt
-Subject:  Symantec Corporation
-Issuer:   VeriSign Class 3 Code Signing 2010 CA
+Resources: 2 - 956 bytes
 
 ---
 
 ```
 Is the sample packed? How can you tell?
 
-upx: C:\Users\flare\Desktop\P_labs\Shadyrabbit.exe: NotPackedException: not packed by UPX
 
-The sample does not appear to be packed with UPX, as upx -d returns NotPackedException. However, DIE reports high entropy in the .text and .rdata sections and especially the large overlay entropy of 7.99 suggesting that portions of the executable may be compressed, encrypted, or packed using a non-UPX technique.
+Using CFF tools we can see that it's UPX packed file 
 
-Offset	Size	Entropy	Status	Name
-00000000	00000400	2.47377	not packed	PE Header
-00000400	00003000	6.58422	packed	Section(0)['.text']
-00003400	00003200	7.17737	packed	Section(1)['.rdata']
-00006600	00000200	0.18616	not packed	Section(2)['.data']
-00006800	00007200	4.20414	not packed	Section(3)['.rsrc']
-0000da00	00000400	3.29455	not packed	Section(4)['.reloc']
-0000de00	0005e02b	7.99750	packed	Overlay
+[Results of File Scan]
 
-PS C:\Tools > .\upx\upx-4.2.1-win64\upx.exe -d C:\Users\flare\Desktop\P_labs\Shadyrabbit.exe > C:\Users\flare\Desktop\P_labs\unpacked.exe
-upx: C:\Users\flare\Desktop\P_labs\Shadyrabbit.exe: NotPackedException: not packed by UPX
-Probably packed / encoded by other tools
+
+Best Match: UPX 2.90 [LZMA] (Delphi stub) -> Markus Oberhumer, Laszlo Molnar & John Reise
+
+All Matches:
+
+Signature: UPX 2.90 [LZMA] (Delphi stub) -> Markus Oberhumer, Laszlo Molnar & John Reise
+Matches: 55
+
+Signature: UPX v0.89.6 - v1.02 / v1.05 - v1.22
+Matches: 43
+
+Signature: UPX v3.0
+Matches: 7
+
+And we can also unpack it using CFF Exlpoler
 
 
 Is there anything interesting or unique about the structure of
 this PE?
 
-Offset	Size	Entropy	Status	Name
-00000000	00000400	2.47377	not packed	PE Header
-00000400	00003000	6.58422	packed	Section(0)['.text']
-00003400	00003200	7.17737	packed	Section(1)['.rdata'] 
-00006600	00000200	0.18616	not packed	Section(2)['.data']
-00006800	00007200	4.20414	not packed	Section(3)['.rsrc']
-0000da00	00000400	3.29455	not packed	Section(4)['.reloc']
-0000de00	0005e02b	7.99750	packed	Overlay
-
--> this .rdata section is healily packed . 
+analyzing the Unpacked file using PEStudio we can conclude that file entropy is really suspicious here.
+resources > file-ratio : The file ratio for `XIN: 82.89%` Which is highly suspicious.
 
 
-Can you identify any potential host-based indicators of this
-sample?
-Running strings on this exe provides us with crucial information on this virus
-Host based indicator would be use of this this library & functions.
-It can be used to read/write & create persistence in device.
+Can you identify any potential host-based indicators of this sample?
+Here are some:
 
-CreateFileW → capability to access/create files
-WriteFile → capability to write files
-CreateProcessW → capability to execute another process
+Import of the following librarires:
+ChangeServiceConfigA
+CreateServiceA
+RegSetValueExA
+RegCreateKeyExA
+RegDeleteKeyA
+RegDeleteValueA
+AddIPAddress
+11 (inet_addr)
+WriteFile
 
-FlashUtil.exe —> Use of Adobe Flash here.
-Adobe Flash Player Installer/Uninstaller 27.0 —> claimed file/product identity.
-27.0.0.170 — >claimed version.
-requestedExecutionLevel="highestAvailable" -> executable requests highest available privileges.
+The file named is ( IP Helper API,1 )
 
+Strings contains so much suspicious imports/data
+00018298	07	A	strncat
+000182a2	07	A	realloc
+000182ac	08	A	wcstombs
+000182b8	0e	A	_beginthreadex
+000182ca	06	A	calloc
+000182d2	0a	A	MSVCRT.dll
+000182e0	14	A	??1type_info@@UAE@XZ
+000182f8	09	A	_initterm
+00018304	0c	A	_adjust_fdiv
+00018312	09	A	WINMM.dll
+0001831c	0a	A	WS2_32.dll
+0001832a	4c	A	?_Tidy@?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@AAEX_N@Z
+0001837a	59	A	?_C@?1??_Nullstr@?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@CAPBDXZ@4DB
+000183d6	46	A	??1?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@QAE@XZ
+00018420	54	A	?assign@?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@QAEAAV12@PBDI@Z
+00018478	4e	A	?_Grow@?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@AAE_NI_N@Z
 
 Can you identify any potential network-based indicators from
 this sample?
 
-No clear host based indicator were identified. The url has some linkes but they are associated with CA authority.
-NO suspicious IP/ network resources were identified. 
+Yes It has clear indicator there is some network based acitivity going off in the background.
 
+00019050	0e	A	OpenSCManagerA
+00019068	07	A	connect
+00019070	0b	A	getpeername
+0001907c	06	A	accept
+00019084	06	A	netsil
+0001908c	08	A	CONNECT 
+00019098	05	A	POST 
+000190a0	05	A	HEAD 
+000190b0	07	A	http://
+000190bc	0a	A	WSAStartup
+000190cc	0b	A	0oveFileExA
+000190d8	27	A	%s:\Documents and Settings\Local Server
+00019104	0c	A	winlogon.exe
+00019114	12	A	%2d%2d%2d%2d%2d%2d
+00019128	24	A	taskkill /f /t /im LiveUpdate36O.exe
+00019150	0a	A	REG_BINARY
+000191f8	08	A	\CMD.EXE
+00019204	0f	A	GetStartupInfoA
+00019214	0f	A	0erminateThread
+00019224	40	A	ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/
+0001926b	05	A	roup1
+000192a8	0d	A	InternetOpenA
+000192c0	18	A	Mozilla/4.0 (compatible)
+000192dc	08	A	https://
 
 What might this program (shadyrabbit) do?
 
-Probably a dropper. Dropping adobe flash to our system & execute c2.
+This is probably a dropper and this malware tries to conenct to the server for C2 using RDP configuration manipulation/potential remote-access functionality.
+
+
 ```
