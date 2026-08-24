@@ -115,4 +115,106 @@ What might this program (shadyrabbit) do?
 This is probably a dropper and this malware tries to conenct to the server for C2 using RDP configuration manipulation/potential remote-access functionality.
 
 
+
+---
+
+More detailed analysis . How it should be done.
+
+Cff exploler. 
+File info -> UPX 2.90 [LZMA] (Delphi stub) -> Markus Oberhumer, Laszlo Molnar & John Reise
+
+Examining header -> raw size is 0 while virtual size is 0x11000
+
+Import directory => There is only 1 import with 6,7 function import
+
+Unpack the upx ->  or use Cff to unpack the file.
+
+
+Analyzing the unpacked file.
+
+.rsrc	000181DC	00004000	00019000  `XIN: 82.89%`  
+virtual size -> 000181DC
+Raw size -> 00019000 
+
+Seems like we can extract more file from here.
+Using 
+Resouce editor and XIn. save raw we can get the file. Seems like it was a dll. 
+Only exports the function called Solo.
+
+Using capa to analyze this dll.
+
+┍━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┯━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┑
+│ Capability                                            │ Namespace                                            │
+┝━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┿━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┥
+│ check for time delay via GetTickCount (2 matches)     │ anti-analysis/anti-debugging/debugger-detection      │
+│ reference anti-VM strings                             │ anti-analysis/anti-vm/vm-detection                   │
+│ contain obfuscated stackstrings                       │ anti-analysis/obfuscation/string/stackstring         │
+│ log keystrokes                                        │ collection/keylog                                    │
+│ send data (3 matches)                                 │ communication                                        │
+│ receive and write data from server to client          │ communication/c2/file-transfer                       │
+│ resolve DNS (4 matches)                               │ communication/dns                                    │
+│ create pipe                                           │ communication/named-pipe/create                      │
+│ create two anonymous pipes                            │ communication/named-pipe/create                      │
+│ read pipe                                             │ communication/named-pipe/read                        │
+│ get socket information (2 matches)                    │ communication/socket                                 │
+│ get socket status (4 matches)                         │ communication/socket                                 │
+│ initialize Winsock library (2 matches)                │ communication/socket                                 │
+│ set socket configuration (2 matches)                  │ communication/socket                                 │
+│ create UDP socket                                     │ communication/socket/udp/send                        │
+│ act as TCP client                                     │ communication/tcp/client                             │
+│ reference Base64 string                               │ data-manipulation/encoding/base64                    │
+│ encode data using XOR (3 matches)                     │ data-manipulation/encoding/xor                       │
+│ read clipboard data                                   │ host-interaction/clipboard                           │
+│ write clipboard data (2 matches)                      │ host-interaction/clipboard                           │
+│ interact with driver via control codes (2 matches)    │ host-interaction/driver                              │
+│ get common file path (2 matches)                      │ host-interaction/file-system                         │
+│ get file system object information                    │ host-interaction/file-system                         │
+│ create directory                                      │ host-interaction/file-system/create                  │
+│ delete directory                                      │ host-interaction/file-system/delete                  │
+│ delete file (4 matches)                               │ host-interaction/file-system/delete                  │
+│ enumerate files recursively (2 matches)               │ host-interaction/file-system/files/list              │
+│ get file size                                         │ host-interaction/file-system/meta                    │
+│ read file on Windows (3 matches)                      │ host-interaction/file-system/read                    │
+│ write file on Windows (4 matches)                     │ host-interaction/file-system/write                   │
+│ enumerate gui resources                               │ host-interaction/gui                                 │
+│ get graphical window text                             │ host-interaction/gui/window/get-text                 │
+│ get CPU information                                   │ host-interaction/hardware/cpu                        │
+│ get number of processors                              │ host-interaction/hardware/cpu                        │
+│ simulate CTRL ALT DEL                                 │ host-interaction/hardware/keyboard                   │
+│ get memory capacity                                   │ host-interaction/hardware/memory                     │
+│ power down monitor                                    │ host-interaction/hardware/monitor                    │
+│ get disk information                                  │ host-interaction/hardware/storage                    │
+│ access the Windows event log                          │ host-interaction/log/winevt/access                   │
+│ check mutex and exit                                  │ host-interaction/mutex                               │
+│ get local IPv4 addresses (2 matches)                  │ host-interaction/network/address                     │
+│ get hostname                                          │ host-interaction/os/hostname                         │
+│ get system information on Windows                     │ host-interaction/os/info                             │
+│ check OS version                                      │ host-interaction/os/version                          │
+│ create a process with modified I/O handles and window │ host-interaction/process/create                      │
+│ create process on Windows (2 matches)                 │ host-interaction/process/create                      │
+│ enumerate processes (2 matches)                       │ host-interaction/process/list                        │
+│ acquire debug privileges (5 matches)                  │ host-interaction/process/modify                      │
+│ modify access privileges (3 matches)                  │ host-interaction/process/modify                      │
+│ enumerate process modules                             │ host-interaction/process/modules/list                │
+│ terminate process (5 matches)                         │ host-interaction/process/terminate                   │
+│ query or enumerate registry key (2 matches)           │ host-interaction/registry                            │
+│ delete registry key (3 matches)                       │ host-interaction/registry/delete                     │
+│ delete registry value (2 matches)                     │ host-interaction/registry/delete                     │
+│ query service status                                  │ host-interaction/service                             │
+│ run as service                                        │ host-interaction/service                             │
+│ delete service                                        │ host-interaction/service/delete                      │
+│ stop service                                          │ host-interaction/service/stop                        │
+│ create thread (6 matches)                             │ host-interaction/thread/create                       │
+│ terminate thread (2 matches)                          │ host-interaction/thread/terminate                    │
+│ overwrite Master Boot Record (MBR)                    │ impact/wipe-disk/wipe-mbr                            │
+│ get kernel32 base address                             │ linking/runtime-linking                              │
+│ link many functions at runtime                        │ linking/runtime-linking                              │
+│ linked against ZLIB                                   │ linking/static/zlib                                  │
+│ resolve function by parsing PE exports (3 matches)    │ load-code/pe                                         │
+│ execute shellcode via indirect call                   │ load-code/shellcode                                  │
+│ persist via Windows service (2 matches)               │ persistence/service                                  │
+┕━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┷━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┙
+
+Ultimately this malware is a dropper that writes a dll to a disk. Then it is installed as a service then it'll act as a C2 server for communication .
+
 ```
