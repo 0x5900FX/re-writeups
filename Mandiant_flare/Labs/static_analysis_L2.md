@@ -75,4 +75,8 @@ No there are no potential network-based indicator of this malware.
 What might this program do?
 This is an XOR encrypted program. Probably a self replicating dropper. It unpacks itself on loop till memory is corrupted.
 
+
+---
+Need update on this
+
 ```
