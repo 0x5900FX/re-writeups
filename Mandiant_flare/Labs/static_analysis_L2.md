@@ -79,4 +79,7 @@ This is an XOR encrypted program. Probably a self replicating dropper. It unpack
 ---
 Need update on this
 
+
+
+well technical diff
 ```
