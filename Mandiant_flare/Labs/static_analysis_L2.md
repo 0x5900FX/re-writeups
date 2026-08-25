@@ -87,4 +87,16 @@ Resource editor -> save raw data -> save it
 
 Seems like it's XOR encrypted. We gonna upload the file to cyberchef site offline version so that it's not leaaked to outside network.
 
+the XOR enc leaks it's keys as 
+ key x 00 -> Key so 
+ the key there would probably be 0x80
+
+
+
+
+ Inputing file and using XOR decrypt using key 0x80 we can get the MZ file or next executable.
+
+ So disable null preserver.
+
+ 
 ```
