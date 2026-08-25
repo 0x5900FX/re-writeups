@@ -77,9 +77,10 @@ This is an XOR encrypted program. Probably a self replicating dropper. It unpack
 
 
 ---
-Need update on this
+Analyzing the content using IDE & CFF exploler We can conclude that it's not packed however is heavily encrypted.
 
+rcdata section  lable .rsrc: has 45.52 % which can be deemed suspicious.
 
+Analyzing the file 
 
-well technical diff
 ```
