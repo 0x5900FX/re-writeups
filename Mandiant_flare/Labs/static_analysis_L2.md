@@ -81,6 +81,10 @@ Analyzing the content using IDE & CFF exploler We can conclude that it's not pac
 
 rcdata section  lable .rsrc: has 45.52 % which can be deemed suspicious.
 
-Analyzing the file 
+Analyzing the file We can extract the raw data from rcdata using CFF exploler 
+Resource editor -> save raw data -> save it
+
+
+Seems like it's XOR encrypted. We gonna upload the file to cyberchef site offline version so that it's not leaaked to outside network.
 
 ```
