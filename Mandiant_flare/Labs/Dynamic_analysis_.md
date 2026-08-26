@@ -50,11 +50,7 @@ Query for HKLM\SOFTWARE\Microsoft\SecurityManager\AdminCapabilities\userSigninSu
 Change of Reg values
 HKU\S-1-5-21-643046334-913388524-3226014734-1000\SOFTWARE\Classes\Local Settings\Software\Microsoft\Windows\Shell\BagMRU\4\1\7\4
 HKU\S-1-5-21-643046334-913388524-3226014734-1000\SOFTWARE\Classes\Local Settings\Software\Microsoft\Windows\Shell\Bags\52\ComDlg
-HKU\S-1-5-21-643046334-913388524-3226014734-1000\SOFTWARE\Classes\Local Settings\Software\Microsoft\Windows\Shell\Bags\52\ComDlg\{5C4F28B5-F869-4E84-8E60-F11DB97C5CC7}
-HKU\S-1-5-21-643046334-913388524-3226014734-1000\SOFTWARE\Classes\Local Settings\Software\Microsoft\Windows\Shell\Bags\142
-HKU\S-1-5-21-643046334-913388524-3226014734-1000\SOFTWARE\Classes\Local Settings\Software\Microsoft\Windows\Shell\Bags\142\Shell
-HKU\S-1-5-21-643046334-913388524-3226014734-1000\SOFTWARE\Classes\Local Settings\Software\Microsoft\Windows\Shell\Bags\142\Shell\{5C4F28B5-F869-4E84-8E60-F11DB97C5CC7}
-HKU\S-1-5-21-643046334-913388524-3226014734-1000_Classes\Local Settings\Software\Microsoft\Windows\CurrentVersion\AppContainer\Storage\microsoft.windows.shellexperiencehost_cw5n1h2txyewy\SOFTWARE
+
 
 Keys Delted
 
