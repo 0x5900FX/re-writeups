@@ -1,6 +1,6 @@
 # Reverse Engineering Write-ups
 
-This repository contains my reverse engineering notes, crackme walkthroughs, and malware-analysis practice. It is organized by challenge set so the content is easier to browse and review.
+This repository contains my reverse-engineering notes, crackme walkthroughs, and malware-analysis practice. It is organized by challenge set so the content is easier to browse and review. The index and progress table below reflect the write-ups currently included in the repository.
 
 ## Repository structure
 
@@ -59,7 +59,7 @@ re-writeups/
 |----------|------|--------|-------|
 | Crackme | muhemed_crackme | Complete | Basic static analysis and decode practice |
 | Crackme | easyaf_476f64 | Complete | String comparison / simple reversing |
-| Crackme | easy_reverse | Complete | String Comparision |
+| Crackme | easy_reverse | Complete | String comparison |
 | Crackme | really_easy_elzooms | Complete | TBD |
 | Crackme | secret_key | Complete | TBD |
 | Crackme | terratist_pin_exe | Complete | TBD |
@@ -83,8 +83,16 @@ re-writeups/
 - IDA Pro
 - x64dbg
 - Ghidra
+- PE-bear
+- Detect It Easy (DIE)
 - checksec
 - strings
 - Python
+- Wireshark
+- Procmon
+- YARA
+- FLOSS
+- capa
+- CyberChef
 - REMnux / FlareVM (when applicable)
  
