@@ -82,7 +82,29 @@ Mthodologies that we're supposed to do were kinda out of way . SO fixing it now.
 
 D.I.E has 2 method
 One is DIE & NFD (Detect it easy) & Nauz file detector
-Chossing NFD we sucessfully find it being loaded it packed with VmProtectPacker
+Chossing NFD we sucessfully find it being loaded it packed with VmProtectPacker.
+
+
+
+using floss
+We can get this
+
+
+VMProtect Software1
+VMProtect Software CA0
+160716000000Z
+260714235959Z0@1!0
+VMProtect Client ipn56211
+VMProtect Software0
+O=M_x
+l[a9Fd>(
+)>I?
+|>+I
+V0T0R
+Lhttp://pki-crl.symauth.com/ca_219679623e6b4fa507d638cbeba72ecb/LatestCRL.crl07
++0)0'
+http://pki-ocsp.symauth.com0
+
 
 
 ```
