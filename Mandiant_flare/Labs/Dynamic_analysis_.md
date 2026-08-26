@@ -76,4 +76,13 @@ Host: ctldl.windowsupdate.com
 
 GET /MFEwTzBNMEswSTAJBgUrDgMCGgUABBT3xL4LQLXDRDM9P665TW442vrsUQQUReuir%2FSSy4IxLVGLp6chnfNtyA8CEA6bGI750C3n79tQ4ghAGFo%3D HTTP/1.1
 
+---
+Edit on file ps:
+Mthodologies that we're supposed to do were kinda out of way . SO fixing it now.
+
+D.I.E has 2 method
+One is DIE & NFD (Detect it easy) & Nauz file detector
+Chossing NFD we sucessfully find it being loaded it packed with VmProtectPacker
+
+
 ```
