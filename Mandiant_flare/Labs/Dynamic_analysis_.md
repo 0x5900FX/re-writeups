@@ -107,4 +107,7 @@ http://pki-ocsp.symauth.com0
 
 This dll has one export in it. Named RunDllEntry
 
+Lets save out VMstate first then 
+run that dll into our machine.
+
 ```
