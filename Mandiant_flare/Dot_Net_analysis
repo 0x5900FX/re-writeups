@@ -1,0 +1,188 @@
+What is .NET?
+• A framework consisting of two components
+o An execution engine – Common Language Runtime (CLR)
+o A large class library – i.e., massive library of reusable code
+
+
+• Microsoft’s Common Language Infrastructure (CLI) specification
+o Describes executable code and runtime
+o Platform agnostic system
+• Language and OS independent. Supported languages:
+o C#, VB.Net, F#, PowerShell, Iron Python, etc.
+
+Tools :
+
+Static
+CFF exploler
+dnSpy
+de4dot
+
+Static analysis phenomena
+P/invoke
+Reflection
+
+Indicators
+File type
+.Net diretory header
+
+
+Tool Focus – de4dot
+• Powerful automated .NET deobfuscator
+• Supports many different obfuscators
+• Manual options available for unsupported obfuscators
+
+de4dot performs the following actions:
+• Member renaming
+• String decryption
+• Control flow deobfuscation
+• Dead code removal
+
+EntrypointToken -> Original Entry Point for a .NET executable.
+
+Platform Invoke capability is built into .NET for native interoperability.
+P/Invoke is a technology that allows you to access structs, callbacks, and functions in unmanaged libraries from
+your managed code.
+
+Win32 method can be declared in your .NET code by applying the DllImport attribute to a body-less method. .NET
+will automatically marshal arguments and return values.
+
+
+---
+```
+de4dot.exe evil.exe
+de4dot.exe evil.exe -o evil_deob.exe --strtyp delegate --strtok 0600003D
+• -o to name output file (default is <filename> _cleaned)
+• --strtype to indicate string decryptor type
+• delegate because it is running in a VM and we are willing to let it run "the real string decrypter"
+- use safe malware handling practices
+• --strtok to indicate the meta data token of the decryption routine
+Look for a string decryption routine that is used throughout the program
+• Return type String
+• Function argument often byte array (byte[])
+• Called when you would expect to see a string
+
+If the sample is obfuscated, first try running de4dot.exe <sample_name>. This will autodetect the obfuscator and
+save the new file to <sample_name>_cleaned. Look at the new file – if you discover encoded strings, look for the
+decoding routine and get the metadata token. Then use de4dot.exe <cleaned_sample_name> -o
+<new_sample_name> --stripe delegate –strtok <metadata_token>
+strtyp/strtok parameters are used for telling de4dot where the string decryption function is so it can decrypt strings
+for you.
+
+```
+
+WMI is used for local and remote system administration
+• Survey system
+• Detect antivirus
+• Detect VM
+• Process manipulation
+
+Some Ways Malware Can Connect to WMI
+• Instantiate a SWbemServices COM object:
+VBScript: Set oWmi = CreateObject("WbemScripting.SWbemLocator")
+• Using a “moniker string”:
+VBScript: GetObject("winmgmts://./root/cimv2")
+• Via PowerShell cmdlets (more later)
+PowerShell:
+Get-CimInstance …
+Get-WmiObject
+
+
+See malware doing something suspicious with WMI? Open wbemtest.exe and you can enumerate the classes on
+your system and view the actual properties and methods. You can also use wmic.exe to directly interact with
+WMI.
+wmic bios get serial number -> Get BIOS serial num -> usually on back of pc.
+
+it gathers
+information via at least the following WMI classes:
+• Win32_OperatingSystem
+• Win32_ComputerSystem
+• Win32_BIOS
+• Win32_TimeZone
+• Win32_PageFileUsage
+• Win32_Processor
+• Win32_Keyboard
+• Win32_QuickFixEngineering
+• Win32_NetworkAdapter
+• Win32_NetworkAdapterConfiguration
+
+```
+Namespace       ->  root\cimv2
+Class           ->  Win32 Process
+Properties ->       Caption ~ The process name
+                    Command Line ~ Name and arguments
+
+Methods         ->  Create() ~ Spawn a new process
+                    Terminate() ~ Kill a process
+
+WMI Classes belong to a particular namespace
+WmiMgmt.msc enumerates them
+Most commonly used is root\cimv2
+Classes provide an object-oriented interface to hardware/software via:
+Properties (data)
+Methods (functions that do something)
+One example of malware behavior using Win32_process: Enumerate processes, compare the name to
+something like procexp or procmon to evade analysis, and terminate those of interest.
+
+
+WMI Classes and MSDN
+Name: Win32_Group
+Derives from: Win32_Account
+Properties: Caption, Description, SID, etc.
+Methods: Rename
+• The Rename method will rename the Windows group associated with a given class instance
+```
+
+
+WMI Query Language (WQL)
+
+```
+Like Structured Query Language (SQL) but with some limitations
+SELECT <fields>
+FROM <class>
+WHERE <property> <operator> <constant>
+Example:
+SELECT * FROM Win32_Logica1Disk WHERE FileSystem = "NTFS"
+Always returns a collection
+Attackers can use this to iterate and read or change objects
+```
+
+| Capability | WMI Class or Namespace |
+|----|----|
+VM Detection, number of CPUs | Win32_ComputerSystem, Win32_BI0S, Win32_PNPEntity, etc.
+Process check/termination/creation|  Win32 Process
+Shadow copy deletion (ransomware) Win32_ShadowCopy
+Checking antivirus | AntiVirusProduct (namespace:
+root\SecurityCenter2)
+Surveying/removing software | Win32_Product
+Survey OS version | Win32_0perating5ystem
+
+
+```
+Script to detect a VM  by malware / just check
+Set wmi = GetObject("winmgmts:")
+Set col_bios = wmi.ExecQuery("SELECT * FROM Win32_BIOS")
+For Each bios in col_bios: Echo(bios.SerialNumber): Next
+```
+
+
+Powershell
+Microsoft’s next-generation command line
+Object-oriented
+.NET-driven with native access to COM + WMI
+Can access native Windows APIs (via .NET)
+Has been used as runtime for:
+• Backdoors (e.g., Empire)
+• Shellcode launchers (BLUESTEAL POS malware)
+• Other malware (e.g., credential theft tools)
+
+
+Execution Policy
+Controls whether PowerShell runs scripts
+Dispositions include: Unrestricted, Restricted, AllSigned
+Common work-arounds for attackers (there are many more):
+• Typing, pasting, or piping script code into an interactive console
+• HKCU registry modification
+• Download and execute (“Download cradle”, shown later)
+• Command-line arguments to powershell.exe (shown next)
+o Bypassing execution policy
+o Supplying script code
