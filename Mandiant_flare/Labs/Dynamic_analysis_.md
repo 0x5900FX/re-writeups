@@ -110,4 +110,48 @@ This dll has one export in it. Named RunDllEntry
 Lets save out VMstate first then 
 run that dll into our machine.
 
+
+
+
+After running & dynamically assessing Procexp and Wireshark request
+
+
+These are the one of the suspect here. 
+7:45:24.4520523 AM	rundll32.exe	3268	WriteFile	C:\Users\flare\AppData\Local\Temp\qln.dbx	SUCCESS	Offset: 0, Length: 3, Priority: Normal
+7:45:24.4627858 AM	rundll32.exe	3268	RegSetValue	HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Run\TmProvider	SUCCESS	Type: REG_SZ, Length: 150, Data: rundll32 C:\Users\flare\AppData\Local\Temp\TMPprovider038.dll, RunDllEntry
+7:45:24.4660037 AM	rundll32.exe	3268	RegSetValue	HKCU\SOFTWARE\Microsoft\Internet Explorer\InternetRegistry\fertger	SUCCESS	Type: REG_SZ, Length: 66, Data: 793D7DBD667E4A61ABE88FC7B33FE964
+7:45:24.6009397 AM	rundll32.exe	3268	RegSetValue	HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Internet Settings\ZoneMap\ProxyBypass	SUCCESS	Type: REG_DWORD, Length: 4, Data: 1
+7:45:24.6009827 AM	rundll32.exe	3268	RegSetValue	HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Internet Settings\ZoneMap\IntranetName	SUCCESS	Type: REG_DWORD, Length: 4, Data: 1
+7:45:24.6010265 AM	rundll32.exe	3268	RegSetValue	HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Internet Settings\ZoneMap\UNCAsIntranet	SUCCESS	Type: REG_DWORD, Length: 4, Data: 1
+7:45:24.6010544 AM	rundll32.exe	3268	RegSetValue	HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Internet Settings\ZoneMap\AutoDetect	SUCCESS	Type: REG_DWORD, Length: 4, Data: 0
+7:45:24.6057667 AM	rundll32.exe	3268	RegSetValue	HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Internet Settings\ZoneMap\ProxyBypass	SUCCESS	Type: REG_DWORD, Length: 4, Data: 1
+7:45:24.6057953 AM	rundll32.exe	3268	RegSetValue	HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Internet Settings\ZoneMap\IntranetName	SUCCESS	Type: REG_DWORD, Length: 4, Data: 1
+7:45:24.6058228 AM	rundll32.exe	3268	RegSetValue	HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Internet Settings\ZoneMap\UNCAsIntranet	SUCCESS	Type: REG_DWORD, Length: 4, Data: 1
+7:45:24.6058499 AM	rundll32.exe	3268	RegSetValue	HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Internet Settings\ZoneMap\AutoDetect	SUCCESS	Type: REG_DWORD, Length: 4, Data: 0
+
+We can see a writefile here on qln.dbx -> it contain 044 as a value only nothing more. 
+
+
+The dll is copied to the temp location. 
+
+there is RegSetValue value changed in here
+HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Run\TmProvider
+
+In this case rundll32 is used to launch the DLL export RunDllEntry, establishing persistence on the
+host.  ( host-based indicator )
+
+Another HBI would be 
+RegSetValue	HKCU\SOFTWARE\Microsoft\Internet Explorer\InternetRegistry\fertger -> the value is set  of 793D7DBD667E4A61ABE88FC7B33FE964 .
+We don't know details yet we'll connect with it.
+
+
+So our Host Based Indicators would be : 
+
+1. WriteFile	C:\Users\flare\AppData\Local\Temp\qln.dbx  ( With data 044 )
+2. RegSetValue HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Run\TmProvider
+with the Data: rundll32 C:\Users\flare\AppData\Local\Temp\TMPprovider038.dll, RunDllEntry
+3. RegSetValue	HKCU\SOFTWARE\Microsoft\Internet Explorer\InternetRegistry\fertger 
+with the value 793D7DBD667E4A61ABE88FC7B33FE964.
+ 
+
 ```
