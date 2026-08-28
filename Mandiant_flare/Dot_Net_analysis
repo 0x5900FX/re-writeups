@@ -1,277 +1,556 @@
-What is .NET?
-• A framework consisting of two components
-o An execution engine – Common Language Runtime (CLR)
-o A large class library – i.e., massive library of reusable code
+# .NET, WMI, and PowerShell — Notes
 
+## What Is .NET?
 
-• Microsoft’s Common Language Infrastructure (CLI) specification
-o Describes executable code and runtime
-o Platform agnostic system
-• Language and OS independent. Supported languages:
-o C#, VB.Net, F#, PowerShell, Iron Python, etc.
+.NET is a software framework consisting primarily of two major components:
 
-Tools :
+* **An execution engine** — the **Common Language Runtime (CLR)**
+* **A large class library** — a massive collection of reusable code
 
-Static
-CFF exploler
-dnSpy
-de4dot
+### Common Language Infrastructure (CLI)
 
-Static analysis phenomena
-P/invoke
-Reflection
+Microsoft's **Common Language Infrastructure (CLI)** specification:
 
-Indicators
-File type
-.Net diretory header
+* Describes executable code and the runtime environment.
+* Provides a **platform-agnostic** system.
+* Supports language and operating-system independence.
 
+### Supported Languages
 
-Tool Focus – de4dot
-• Powerful automated .NET deobfuscator
-• Supports many different obfuscators
-• Manual options available for unsupported obfuscators
+Examples include:
 
-de4dot performs the following actions:
-• Member renaming
-• String decryption
-• Control flow deobfuscation
-• Dead code removal
-
-EntrypointToken -> Original Entry Point for a .NET executable.
-
-Platform Invoke capability is built into .NET for native interoperability.
-P/Invoke is a technology that allows you to access structs, callbacks, and functions in unmanaged libraries from
-your managed code.
-
-Win32 method can be declared in your .NET code by applying the DllImport attribute to a body-less method. .NET
-will automatically marshal arguments and return values.
-
+* C#
+* VB.NET
+* F#
+* PowerShell
+* IronPython
+* And others
 
 ---
-```
+
+# .NET Analysis Tools
+
+## Static Analysis Tools
+
+Common tools include:
+
+* **CFF Explorer**
+* **dnSpy**
+* **de4dot**
+
+### Static Analysis Concepts
+
+When analyzing .NET malware, some important concepts include:
+
+* **P/Invoke**
+* **Reflection**
+* Metadata and entry points
+* Managed and unmanaged code interaction
+
+### Indicators of a .NET Executable
+
+Useful indicators include:
+
+* File type
+* .NET directory/header information
+* CLR metadata
+
+---
+
+# Tool Focus — de4dot
+
+**de4dot** is an automated .NET deobfuscation tool.
+
+It supports many different obfuscators and also provides manual options for unsupported or partially supported obfuscators.
+
+### de4dot Can Perform
+
+* Member renaming
+* String decryption
+* Control-flow deobfuscation
+* Dead-code removal
+
+### EntrypointToken
+
+The **EntrypointToken** identifies the original entry point of a .NET executable through its metadata token.
+
+---
+
+# Platform Invoke (P/Invoke)
+
+Platform Invoke (**P/Invoke**) is built into .NET to provide interoperability with native code.
+
+P/Invoke allows managed .NET code to access:
+
+* Structures
+* Callbacks
+* Functions
+* APIs in unmanaged/native libraries
+
+A Win32 function can be declared in .NET using the **`DllImport`** attribute on a method declaration.
+
+.NET automatically handles the **marshalling** of arguments and return values between managed and unmanaged code.
+
+---
+
+# de4dot Examples
+
+```text
 de4dot.exe evil.exe
+
 de4dot.exe evil.exe -o evil_deob.exe --strtyp delegate --strtok 0600003D
-• -o to name output file (default is <filename> _cleaned)
-• --strtype to indicate string decryptor type
-• delegate because it is running in a VM and we are willing to let it run "the real string decrypter"
-- use safe malware handling practices
-• --strtok to indicate the meta data token of the decryption routine
-Look for a string decryption routine that is used throughout the program
-• Return type String
-• Function argument often byte array (byte[])
-• Called when you would expect to see a string
-
-If the sample is obfuscated, first try running de4dot.exe <sample_name>. This will autodetect the obfuscator and
-save the new file to <sample_name>_cleaned. Look at the new file – if you discover encoded strings, look for the
-decoding routine and get the metadata token. Then use de4dot.exe <cleaned_sample_name> -o
-<new_sample_name> --stripe delegate –strtok <metadata_token>
-strtyp/strtok parameters are used for telling de4dot where the string decryption function is so it can decrypt strings
-for you.
-
 ```
 
-WMI is used for local and remote system administration
-• Survey system
-• Detect antivirus
-• Detect VM
-• Process manipulation
+### Important Options
 
-Some Ways Malware Can Connect to WMI
-• Instantiate a SWbemServices COM object:
-VBScript: Set oWmi = CreateObject("WbemScripting.SWbemLocator")
-• Using a “moniker string”:
-VBScript: GetObject("winmgmts://./root/cimv2")
-• Via PowerShell cmdlets (more later)
-PowerShell:
-Get-CimInstance …
+* **`-o`** — specifies the output filename. The default is generally `<filename>_cleaned`.
+* **`--strtyp`** — specifies the string-decryptor type.
+* **`delegate`** — indicates that the string decryption routine can be executed dynamically.
+* **`--strtok`** — specifies the metadata token of the string-decryption routine.
+
+> **Safety note:** When analyzing malware, perform dynamic execution only in an isolated analysis environment such as a properly configured VM or sandbox.
+
+### Identifying a String-Decryption Routine
+
+Look for a routine that is used throughout the program and has characteristics such as:
+
+* A return type of `String`
+* An argument that is often a byte array (`byte[]`)
+* Calls occurring where you would normally expect to see strings
+
+### Typical de4dot Workflow
+
+If a sample is obfuscated, first try:
+
+```text
+de4dot.exe <sample_name>
+```
+
+This attempts to automatically detect the obfuscator and produces a cleaned file, typically named:
+
+```text
+<sample_name>_cleaned
+```
+
+Examine the cleaned file. If encoded strings are still present:
+
+1. Locate the string-decoding/decryption routine.
+2. Identify its metadata token.
+3. Run de4dot again with the appropriate string-decryption options.
+
+For example:
+
+```text
+de4dot.exe <cleaned_sample_name> -o <new_sample_name> --strtyp delegate --strtok <metadata_token>
+```
+
+The **`--strtyp`** and **`--strtok`** parameters tell de4dot which string-decryption mechanism to use and where the relevant routine is located.
+
+---
+
+# Windows Management Instrumentation (WMI)
+
+**Windows Management Instrumentation (WMI)** is used for local and remote system administration.
+
+WMI can be used to:
+
+* Survey system information
+* Detect antivirus/security software
+* Detect virtual machines
+* Enumerate and manipulate processes
+* Query hardware and software information
+
+Malware can also abuse these capabilities for reconnaissance, environment detection, and process manipulation.
+
+## Ways Malware Can Connect to WMI
+
+### 1. Using a SWbemServices COM Object
+
+VBScript:
+
+```vbscript
+Set oWmi = CreateObject("WbemScripting.SWbemLocator")
+```
+
+### 2. Using a Moniker String
+
+VBScript:
+
+```vbscript
+GetObject("winmgmts://./root/cimv2")
+```
+
+### 3. Using PowerShell
+
+PowerShell can interact with WMI/CIM through cmdlets such as:
+
+```powershell
+Get-CimInstance
 Get-WmiObject
-
-
-See malware doing something suspicious with WMI? Open wbemtest.exe and you can enumerate the classes on
-your system and view the actual properties and methods. You can also use wmic.exe to directly interact with
-WMI.
-wmic bios get serial number -> Get BIOS serial num -> usually on back of pc.
-
-it gathers
-information via at least the following WMI classes:
-• Win32_OperatingSystem
-• Win32_ComputerSystem
-• Win32_BIOS
-• Win32_TimeZone
-• Win32_PageFileUsage
-• Win32_Processor
-• Win32_Keyboard
-• Win32_QuickFixEngineering
-• Win32_NetworkAdapter
-• Win32_NetworkAdapterConfiguration
-
-```
-Namespace       ->  root\cimv2
-Class           ->  Win32 Process
-Properties ->       Caption ~ The process name
-                    Command Line ~ Name and arguments
-
-Methods         ->  Create() ~ Spawn a new process
-                    Terminate() ~ Kill a process
-
-WMI Classes belong to a particular namespace
-WmiMgmt.msc enumerates them
-Most commonly used is root\cimv2
-Classes provide an object-oriented interface to hardware/software via:
-Properties (data)
-Methods (functions that do something)
-One example of malware behavior using Win32_process: Enumerate processes, compare the name to
-something like procexp or procmon to evade analysis, and terminate those of interest.
-
-
-WMI Classes and MSDN
-Name: Win32_Group
-Derives from: Win32_Account
-Properties: Caption, Description, SID, etc.
-Methods: Rename
-• The Rename method will rename the Windows group associated with a given class instance
 ```
 
+> **Note:** `Get-WmiObject` is an older cmdlet. Modern PowerShell generally uses the CIM cmdlets such as `Get-CimInstance`.
 
-WMI Query Language (WQL)
+---
 
+# Investigating WMI Activity
+
+If malware is doing something suspicious with WMI, **`wbemtest.exe`** can be used to inspect WMI namespaces, classes, properties, and methods.
+
+Historically, **`wmic.exe`** was also used to interact directly with WMI, although WMIC is deprecated on modern Windows versions.
+
+Example:
+
+```cmd
+wmic bios get serialnumber
 ```
-Like Structured Query Language (SQL) but with some limitations
+
+This retrieves the BIOS serial number, which can sometimes be used for system identification or environment checks.
+
+---
+
+# WMI Classes Commonly Queried by Malware
+
+Examples include:
+
+* `Win32_OperatingSystem`
+* `Win32_ComputerSystem`
+* `Win32_BIOS`
+* `Win32_TimeZone`
+* `Win32_PageFileUsage`
+* `Win32_Processor`
+* `Win32_Keyboard`
+* `Win32_QuickFixEngineering`
+* `Win32_NetworkAdapter`
+* `Win32_NetworkAdapterConfiguration`
+
+---
+
+# Understanding WMI Structure
+
+```text
+Namespace
+    root\cimv2
+
+Class
+    Win32_Process
+
+Properties
+    Caption       -> Process name
+    CommandLine   -> Process name and arguments
+
+Methods
+    Create()      -> Creates a process
+    Terminate()   -> Terminates a process
+```
+
+### WMI Namespaces
+
+WMI classes belong to a particular **namespace**.
+
+The most commonly used namespace is:
+
+```text
+root\cimv2
+```
+
+WMI classes provide an object-oriented interface to hardware and software through:
+
+* **Properties** — represent data
+* **Methods** — perform actions
+
+### Example: Win32_Process
+
+Malware can use `Win32_Process` to:
+
+* Enumerate running processes
+* Compare process names against analysis/debugging tools
+* Identify processes of interest
+* Potentially terminate selected processes
+
+For example, malware might look for tools such as **Process Explorer** or **Process Monitor** as part of an analysis-evasion technique.
+
+---
+
+# WMI Classes and Documentation
+
+Example:
+
+```text
+Name:
+    Win32_Group
+
+Derives from:
+    Win32_Account
+
+Properties:
+    Caption
+    Description
+    SID
+    ...
+
+Methods:
+    Rename
+```
+
+The `Rename` method can rename the Windows group associated with a particular class instance.
+
+---
+
+# WMI Query Language (WQL)
+
+**WMI Query Language (WQL)** is similar to SQL but has some limitations.
+
+General structure:
+
+```sql
 SELECT <fields>
 FROM <class>
 WHERE <property> <operator> <constant>
+```
+
 Example:
-SELECT * FROM Win32_Logica1Disk WHERE FileSystem = "NTFS"
-Always returns a collection
-Attackers can use this to iterate and read or change objects
+
+```sql
+SELECT * FROM Win32_LogicalDisk WHERE FileSystem = "NTFS"
 ```
 
-| Capability | WMI Class or Namespace |
-|----|----|
-VM Detection, number of CPUs | Win32_ComputerSystem, Win32_BI0S, Win32_PNPEntity, etc.
-Process check/termination/creation|  Win32 Process
-Shadow copy deletion (ransomware) Win32_ShadowCopy
-Checking antivirus | AntiVirusProduct (namespace:
-root\SecurityCenter2)
-Surveying/removing software | Win32_Product
-Survey OS version | Win32_0perating5ystem
+WMI queries commonly return a **collection of objects**.
 
+Applications, administrators, and malware can iterate over these objects to read information or, where permitted, invoke methods that modify system state.
 
-```
-Script to detect a VM  by malware / just check
+---
+
+# WMI Capabilities and Classes
+
+| Capability                                   | WMI Class or Namespace                                        |
+| -------------------------------------------- | ------------------------------------------------------------- |
+| VM detection / CPU information               | `Win32_ComputerSystem`, `Win32_BIOS`, `Win32_PnPEntity`, etc. |
+| Process enumeration / termination / creation | `Win32_Process`                                               |
+| Shadow-copy management                       | `Win32_ShadowCopy`                                            |
+| Antivirus/security-product checks            | `AntiVirusProduct` in `root\SecurityCenter2`                  |
+| Software inventory                           | `Win32_Product`                                               |
+| OS information                               | `Win32_OperatingSystem`                                       |
+
+---
+
+# Example: WMI-Based Environment Check
+
+The following VBScript queries the BIOS serial number:
+
+```vbscript
 Set wmi = GetObject("winmgmts:")
 Set col_bios = wmi.ExecQuery("SELECT * FROM Win32_BIOS")
-For Each bios in col_bios: Echo(bios.SerialNumber): Next
+
+For Each bios In col_bios
+    Echo(bios.SerialNumber)
+Next
 ```
 
+This type of query can be useful for legitimate system administration and can also appear in malware when gathering system-identification information.
 
-Powershell
-Microsoft’s next-generation command line
-Object-oriented
-.NET-driven with native access to COM + WMI
-Can access native Windows APIs (via .NET)
-Has been used as runtime for:
-• Backdoors (e.g., Empire)
-• Shellcode launchers (BLUESTEAL POS malware)
-• Other malware (e.g., credential theft tools)
+---
 
+# PowerShell
 
-Execution Policy
-Controls whether PowerShell runs scripts
-Dispositions include: Unrestricted, Restricted, AllSigned
-Common work-arounds for attackers (there are many more):
-• Typing, pasting, or piping script code into an interactive console
-• HKCU registry modification
-• Download and execute (“Download cradle”, shown later)
-• Command-line arguments to powershell.exe (shown next)
-o Bypassing execution policy
-o Supplying script code
+**PowerShell** is Microsoft's object-oriented command-line shell and scripting environment.
 
-https://www.netspi.com/blog/technical-blog/network-penetration-testing/15-ways-to-bypass-the-powershell-execution-policy/[Bypass execution policy]
+Key characteristics:
 
-| Full Normal Common Shortening | Obfuscation |
- -- | -- |
-|-ExecutionPolicy <policy> | -ep bypass, -ep unrestricted |
-|-NoProfile | -nop |
-|-Noninteractive | -noni
-|-WindowStyle hidden | -w hidden | 
-|-Command <script code> | -c <script code> | 
-|-EncodedCommand <Base64 text> | -enc <Base64 text>
+* Object-oriented
+* Built on .NET
+* Provides access to COM and WMI/CIM
+* Can interact with native Windows APIs through .NET and other mechanisms
+* Supports powerful scripting and automation
 
+PowerShell has also been abused as a runtime or execution mechanism by malware, including:
 
+* Backdoors
+* Downloaders
+* Credential-theft tools
+* Shellcode loaders
 
-Cmdlets
-(Cmdlet is pronounced command-let)
+---
+
+# PowerShell Execution Policy
+
+PowerShell's **execution policy** controls how PowerShell scripts are permitted to run.
+
+Common policies include:
+
+* `Restricted`
+* `AllSigned`
+* `RemoteSigned`
+* `Unrestricted`
+
+Execution policy is **not a complete security boundary**. It primarily controls script execution behavior and can be affected by configuration, scope, and invocation method.
+
+### Common Ways Attackers Attempt to Avoid Script Restrictions
+
+Examples include:
+
+* Typing or pasting commands directly into an interactive PowerShell session
+* Supplying commands through command-line parameters
+* Using encoded commands
+* Using download-and-execute techniques
+* Modifying applicable execution-policy settings
+
+> **Note:** These techniques should be studied in controlled malware-analysis or lab environments.
+
+---
+
+# PowerShell Command-Line Options
+
+| Full Option                 | Common Short Form | Purpose                                          |
+| --------------------------- | ----------------- | ------------------------------------------------ |
+| `-ExecutionPolicy <policy>` | `-ep <policy>`    | Specify execution policy for the session/process |
+| `-NoProfile`                | `-nop`            | Do not load the PowerShell profile               |
+| `-NonInteractive`           | `-noni`           | Run without an interactive prompt                |
+| `-WindowStyle Hidden`       | `-w hidden`       | Specify the PowerShell window style              |
+| `-Command <script>`         | `-c <script>`     | Execute a command or script                      |
+| `-EncodedCommand <Base64>`  | `-enc <Base64>`   | Execute a Base64-encoded command                 |
+
+Reference:
+
+[NetSPI — 15 Ways to Bypass the PowerShell Execution Policy](https://www.netspi.com/blog/technical-blog/network-penetration-testing/15-ways-to-bypass-the-powershell-execution-policy/?utm_source=chatgpt.com)
+
+---
+
+# Cmdlets
+
+**Cmdlet** is pronounced *command-let*.
+
 Cmdlets are:
-• Lightweight commands specific to PowerShell
-o PowerShell handles cmdlet arguments for the cmdlet
-• .NET-driven
-o Cmdlets are .NET objects (not executables)
-o Cmdlets can be chained together in a pipeline
-o Cmdlets receive and return .NET objects (not text)
-Cmdlets are a building block of PowerShell’s functionality. You will see PowerShell cmdlets used frequently in
-malware. Some are self-explanatory and others are more cryptic.
 
-A Cmdlet and an Alias: Write-Output (echo)
-Write-Output sends one or more strings to the pipeline
-PowerShell supports aliases (alias -> cmdlet)
-Many pre-defined (dir, echo, cat, cd, cls, copy, cp, del, set, …)
+* Lightweight commands designed specifically for PowerShell
+* .NET-based components
+* Able to receive and return .NET objects
+* Designed to work together through the PowerShell pipeline
 
+Cmdlets are fundamental building blocks of PowerShell functionality.
+
+Many cmdlets are frequently encountered during malware analysis.
+
+---
+
+# Cmdlets and Aliases
 
 Example:
-CommandType     Name                                               Version    Source
------------     ----                                               -------    ------
-Alias           % -> ForEach-Object
-Alias           ? -> Where-Object
-Alias           ac -> Add-Content
-Alias           asnp -> Add-PSSnapin
-Alias           cat -> Get-Content
-Alias           cd -> Set-Location
-Alias           CFS -> ConvertFrom-String                          3.1.0.0    Microsoft.PowerShell.Utility
-Alias           chdir -> Set-Location
-Alias           clc -> Clear-Content
-Alias           clear -> Clear-Host
-Alias           clhy -> Clear-History
-Alias           cli -> Clear-Item
-Alias           clp -> Clear-ItemProperty
-Alias           cls -> Clear-Host
-Alias           clv -> Clear-Variable
 
-Pipelines
-Like in bash or cmd.exe, except:
-• Data is passed between cmdlets as .NET objects, not text
-• Therefore, can access properties, filter results, and pass to subsequent cmdlets+
-
-```
-Get-Process | where-object {$_.ProcessName -like "procmon~" } | Stop-Process
+```powershell
+Write-Output
 ```
 
+`Write-Output` sends objects or strings to the PowerShell pipeline.
 
-Cmdlet: Get-Member (using pipes)
+PowerShell also supports **aliases**, which provide alternative names for commands.
 
+Examples:
+
+```text
+dir
+echo
+cat
+cd
+cls
+copy
+cp
+del
 ```
+
+Some common aliases include:
+
+```text
+Alias    %     -> ForEach-Object
+Alias    ?     -> Where-Object
+Alias    ac    -> Add-Content
+Alias    cat   -> Get-Content
+Alias    cd    -> Set-Location
+Alias    cls   -> Clear-Host
+Alias    del   -> Remove-Item
+```
+
+You can inspect available aliases with:
+
+```powershell
+Get-Alias
+```
+
+---
+
+# PowerShell Pipelines
+
+PowerShell pipelines are conceptually similar to pipelines in Bash or `cmd.exe`, but there is an important difference:
+
+> PowerShell passes **objects**, rather than simply passing text.
+
+This allows commands to access object properties, filter objects, and pass them to subsequent cmdlets.
+
+Example:
+
+```powershell
+Get-Process |
+    Where-Object { $_.ProcessName -like "procmon*" } |
+    Stop-Process
+```
+
+The pipeline:
+
+1. Retrieves running processes with `Get-Process`.
+2. Filters processes whose names match `procmon*`.
+3. Passes the matching process objects to `Stop-Process`.
+
+---
+
+# Get-Member
+
+`Get-Member` can be used to inspect the properties and methods available on PowerShell objects.
+
+Example:
+
+```powershell
 Get-Date | Get-Member -MemberType Properties
+```
 
+Example output:
 
-   TypeName: System.DateTime
+```text
+TypeName: System.DateTime
 
 Name        MemberType     Definition
 ----        ----------     ----------
-DisplayHint NoteProperty   DisplayHintType DisplayHint=DateTime
-Date        Property       datetime Date {get;}
-Day         Property       int Day {get;}
-DayOfWeek   Property       System.DayOfWeek DayOfWeek {get;}
-DayOfYear   Property       int DayOfYear {get;}
-Hour        Property       int Hour {get;}
-
+DisplayHint  NoteProperty  DisplayHintType DisplayHint=DateTime
+Date         Property      datetime Date {get;}
+Day          Property      int Day {get;}
+DayOfWeek    Property      System.DayOfWeek DayOfWeek {get;}
+DayOfYear    Property      int DayOfYear {get;}
+Hour         Property      int Hour {get;}
 ```
 
-Example of function:
+---
 
-PS C:\Users\cyanm> hi_to_youu whats up
-OK
+# Example: Creating a PowerShell Function
 
-PS C:\Users\cyanm> function hi_to_youu($me, $you){
-Add-Type -AssemblyName PresentationFramework
-[System.Windows.MessageBox]::Show("Hi from $env:USERNAME! $me $you", "Message")
+A PowerShell function can accept parameters and execute commands.
+
+Example:
+
+```powershell
+PS C:\Users\cyanm> function hi_to_youu($me, $you) {
+    Add-Type -AssemblyName PresentationFramework
+    [System.Windows.MessageBox]::Show(
+        "Hi from $env:USERNAME! $me $you",
+        "Message"
+    )
 }
+
+PS C:\Users\cyanm> hi_to_youu "hello" "what's up?"
+```
+
+The function displays a Windows message box containing the current username and the supplied arguments.
+
+For example:
+
+```text
+Hi from cyanm! hello what's up?
+```
