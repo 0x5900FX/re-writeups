@@ -152,6 +152,25 @@ So our Host Based Indicators would be :
 with the Data: rundll32 C:\Users\flare\AppData\Local\Temp\TMPprovider038.dll, RunDllEntry
 3. RegSetValue	HKCU\SOFTWARE\Microsoft\Internet Explorer\InternetRegistry\fertger 
 with the value 793D7DBD667E4A61ABE88FC7B33FE964.
- 
 
+
+let's move onto NBI Network Based Indicators:
+
+
+These are the post reuest that was sent from that dll. 
+POST /geo/productid.php?id=793D7DBD667E4A61ABE88FC7B33FE964&v1=038&v2=6551716100&q=5265882854508EFCF958F979E4 HTTP/1.1
+User-Agent: Mozilla / 5.0 (Windows; U; Windows NT 6.1; en-US) AppleWebKit / 525.19 (KHTML, like Gecko) Chrome / 1.0.154.36 Safari / 525.19
+Host: flossme.mandiant.com
+Content-Length: 0
+Cache-Control: no-cache
+
+
+POST /wp08/wp-includes/dtcla.php?id=63B0E9B1AE51484F9B11A6BAD79902BA&v1=038&v2=49478332100&q=5265882854508EFCF958F979E4 HTTP/1.1
+User-Agent: Mozilla / 5.0 (Windows; U; Windows NT 6.1; en-US) AppleWebKit / 525.19 (KHTML, like Gecko) Chrome / 1.0.154.36 Safari / 525.19
+Host: fauxnet.mandiant.com
+Content-Length: 0
+Cache-Control: no-cache
+
+This is what we can analyze and make sense from the loading of that dll.
+ 
 ```
