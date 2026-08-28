@@ -186,3 +186,92 @@ Common work-arounds for attackers (there are many more):
 • Command-line arguments to powershell.exe (shown next)
 o Bypassing execution policy
 o Supplying script code
+
+https://www.netspi.com/blog/technical-blog/network-penetration-testing/15-ways-to-bypass-the-powershell-execution-policy/[Bypass execution policy]
+
+| Full Normal Common Shortening | Obfuscation |
+ -- | -- |
+|-ExecutionPolicy <policy> | -ep bypass, -ep unrestricted |
+|-NoProfile | -nop |
+|-Noninteractive | -noni
+|-WindowStyle hidden | -w hidden | 
+|-Command <script code> | -c <script code> | 
+|-EncodedCommand <Base64 text> | -enc <Base64 text>
+
+
+
+Cmdlets
+(Cmdlet is pronounced command-let)
+Cmdlets are:
+• Lightweight commands specific to PowerShell
+o PowerShell handles cmdlet arguments for the cmdlet
+• .NET-driven
+o Cmdlets are .NET objects (not executables)
+o Cmdlets can be chained together in a pipeline
+o Cmdlets receive and return .NET objects (not text)
+Cmdlets are a building block of PowerShell’s functionality. You will see PowerShell cmdlets used frequently in
+malware. Some are self-explanatory and others are more cryptic.
+
+A Cmdlet and an Alias: Write-Output (echo)
+Write-Output sends one or more strings to the pipeline
+PowerShell supports aliases (alias -> cmdlet)
+Many pre-defined (dir, echo, cat, cd, cls, copy, cp, del, set, …)
+
+
+Example:
+CommandType     Name                                               Version    Source
+-----------     ----                                               -------    ------
+Alias           % -> ForEach-Object
+Alias           ? -> Where-Object
+Alias           ac -> Add-Content
+Alias           asnp -> Add-PSSnapin
+Alias           cat -> Get-Content
+Alias           cd -> Set-Location
+Alias           CFS -> ConvertFrom-String                          3.1.0.0    Microsoft.PowerShell.Utility
+Alias           chdir -> Set-Location
+Alias           clc -> Clear-Content
+Alias           clear -> Clear-Host
+Alias           clhy -> Clear-History
+Alias           cli -> Clear-Item
+Alias           clp -> Clear-ItemProperty
+Alias           cls -> Clear-Host
+Alias           clv -> Clear-Variable
+
+Pipelines
+Like in bash or cmd.exe, except:
+• Data is passed between cmdlets as .NET objects, not text
+• Therefore, can access properties, filter results, and pass to subsequent cmdlets+
+
+```
+Get-Process | where-object {$_.ProcessName -like "procmon~" } | Stop-Process
+```
+
+
+Cmdlet: Get-Member (using pipes)
+
+```
+Get-Date | Get-Member -MemberType Properties
+
+
+   TypeName: System.DateTime
+
+Name        MemberType     Definition
+----        ----------     ----------
+DisplayHint NoteProperty   DisplayHintType DisplayHint=DateTime
+Date        Property       datetime Date {get;}
+Day         Property       int Day {get;}
+DayOfWeek   Property       System.DayOfWeek DayOfWeek {get;}
+DayOfYear   Property       int DayOfYear {get;}
+Hour        Property       int Hour {get;}
+
+```
+
+Example of function:
+
+PS C:\Users\cyanm> hi_to_youu whats up
+OK
+
+PS C:\Users\cyanm> function hi_to_youu($me, $you){
+Add-Type -AssemblyName PresentationFramework
+[System.Windows.MessageBox]::Show("Hi from $env:USERNAME! $me $you", "Message")
+}
