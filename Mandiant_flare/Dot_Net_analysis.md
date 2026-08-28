@@ -554,3 +554,101 @@ For example:
 ```text
 Hi from cyanm! hello what's up?
 ```
+
+
+
+
+
+```text
+Cmdlet: Get-ChildItem (dir)
+In a directory, child items include:
+• Files
+• Sub-directories
+Some objects have properties as well
+• Get-ItemProperty to retrieve
+
+Cmdlet: New-Object -ComObject
+Shown here: WinHttp.WinHttpRequest.5.1
+• Can be used to download and later execute further script code
+• Other options include: Msxml2.XMLHTTP, InternetExplorer.Application
+• Can shorten the argument to -com
+
+Cmdlet: New-Object (for .NET objects)
+Shown here: System.Net.WebClient
+• Often used to download and later execute further script code
+
+Cmdlet: Start-BitsTransfer
+BITS (Background Intelligent Transfer Service) client downloads via HTTP
+• BITS protocol provides more robust transfer capabilities than HTTP
+• Attackers are mainly interested for evasion purposes
+
+Cmdlets: Get-CimInstance / Get-WmiObject
+Get-CimInstance is the up-to-date cmdlet to use for WMI objects
+Get-WmiObject (gwmi) is all but deprecated
+• You will still see malware using it (backward compatible for now)
+
+Use Get-CimInstance or Get-WmiObject to access WMI classes from PowerShell.
+gwmi is an Alias for Get-WmiObject.
+
+WQL via Get-CimInstance / Get-WimiObject
+Get-CimInstance and Get-WmiObject (gwmi) support WQL
+• The -query argument accepts WMI Query Language text
+• Output may be iterated
+
+
+PS C:\Users\flare\Desktop > $p = Get-CimInstance -Query " select * from Win32_Process"
+FLARE-VM 08/28/2026 18:00:48
+PS C:\Users\flare\Desktop > $p[110]
+
+ProcessId Name        HandleCount WorkingSetSize VirtualSize
+--------- ----        ----------- -------------- -----------
+4964      dllhost.exe 321         14163968       2203474829312
+
+
+Cmdlet: Invoke-Expression (iex)
+What it does: Executes a string as PowerShell script code
+Common use: Running decrypted or Base64-decoded script code
+
+PS C:\Users\flare\Desktop > $q = "write-host hello"
+Example:
+PS C:\Users\flare\Desktop > iex $q
+hello
+
+
+Cmdlet: Add-Type
+What it does: Defines a new .NET class in this PowerShell session
+Common use: .NET access to use P/Invoke and directly call Windows API functions
+
+$code= '[Dlllmport( "kernel32.dll" )] public static extern IntPtr UirtualAlloc([snip ... ] ' :
+$winFunc = Add-Type -member-Definition $code -Name "Win32" -namespace Win32Functions -passthru;
+[Byte[]]$sc = Ox83 , OxEC , Ox28 , [snip ... ]. OxC3 ;
+$mem = $winFunc: :Uirtua1Alloc(O.$sc.Length. Ox3000 . Ox40 ):
+for ($i = O; $i -le ($sc.Length- 1); $i++) $winFunc::memset(($mem.Tolnt64()+$i), $sc[$i]. 1)};
+$h = $winFunc: :CreateThread(O.O.$mem, O,O.O):
+$winFunc: :WaitForSingleObject($h. 4294967295);
+
+This is a shellcode launcher for BLUESTEAL POS malware written in PowerShell that uses:
+1. VirtualAlloc to creates a read/write/execute buffer in memory (0x40 = PAGE_EXECUTE_READWRITE)
+2. memset to copy the shellcode into the buffer
+3. CreateThread to create a thread that executes the shellcode
+4. WaitForSingleObject to wait indefinitely on that thread to terminate
+.NET P/Invoke is used to import the Windows API functions.
+
+Notable Observables from Add-Type
+• Add-Type invokes a compiler (usually C# is used)
+• Produces file and process observables (csc.exe, cvtres.exe)
+
+
+```
+
+Add Windows Defender exclusion
+Delete volume shadow copies
+Disable script block logging*
+Add-MpPreference -ExclusionPath "<path>"
+Get-WmiObject Win32_ShadowCopy I
+ForEach-Object {$_.Delete();}
+Write to HKLM\Software\Policies\Microsoft\Windows\PowerShell\ScriptBlockLogging
+
+Cmdlet: Add-Type
+What it does: Defines a new .NET class in this PowerShell session
+Common use: .NET access to use P/Invoke and directly call Windows API functions
