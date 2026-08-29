@@ -656,3 +656,34 @@ Common use: .NET access to use P/Invoke and directly call Windows API functions
 https://learn.microsoft.com/en-us/windows/win32/apiindex/windows-api-list
 
 api list for windows
+
+A listing of Windows data types can be found here:
+https://docs.microsoft.com/en-us/windows/win32/winprog/windows-data-types
+https://docs.microsoft.com/en-us/windows/win32/learnwin32/windows-coding-conventions
+
+“Historically, P stands for "pointer" and LP stands for "long pointer". Long pointers (also called far pointers) are a
+holdover from 16-bit Windows, when they were needed to address memory ranges outside the current segment.
+The LP prefix was preserved to make it easier to port 16-bit code to 32-bit Windows. Today there is no distinction
+— a pointer is a pointer.”
+
+https://docs.microsoft.com/en-us/windows/win32/stg/coding-style-conventions
+Handles are explained later but introduced here due to the frequency of the “h” prefix.
+Introduced by Charles Simonyi https://en.wikipedia.org/wiki/Charles_Simonyi
+
+
+Objects and Handles
+• CreateFile returns a HANDLE
+• A handle is a type of Windows object
+o An object is a reference to a system resource (e.g., file, registry key, or process)
+• To examine or modify a system resource, an application must obtain a handle to the object
+o Handles are represented as DWORD values
+
+
+Objects and Handles
+Life of a handle:
+1. Application obtains a handle
+    o CreateFile, RegOpenKeyEx
+2. Handle is passed to a function that performs an action
+    o WriteFile, RegQueryValueEx
+3. Handle is closed
+    o CloseHandle, RegCloseKey
