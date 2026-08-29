@@ -652,3 +652,7 @@ Write to HKLM\Software\Policies\Microsoft\Windows\PowerShell\ScriptBlockLogging
 Cmdlet: Add-Type
 What it does: Defines a new .NET class in this PowerShell session
 Common use: .NET access to use P/Invoke and directly call Windows API functions
+
+https://learn.microsoft.com/en-us/windows/win32/apiindex/windows-api-list
+
+api list for windows
