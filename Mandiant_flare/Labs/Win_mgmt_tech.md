@@ -329,3 +329,8 @@ $len = 0x892e0 - $os
 $ppath = pl_dropper $lnkfd $os $len "%TEMP%\1630357403074.png"      
 
 this is to extract data from rtf file to png image.
+
+There is more to it . Seems like data is corrupted here 
+Thus sucessfully done.
+
+I can't i just tried it 5 or more so i give up   : ) 
