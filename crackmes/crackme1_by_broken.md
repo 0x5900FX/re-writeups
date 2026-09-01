@@ -245,3 +245,7 @@ The resulting value is then used by the serial validation.
 The final "Console nag" was simply a `printf` call. Patching the call with `NOP`s removes the message.
 
 Overall, this was a nice beginner-friendly Windows x86 reversing challenge: the first stage teaches basic string transformation, the second introduces a simple accumulator-based calculation, and the final stage demonstrates basic binary patching.
+
+
+
+Focusing on Exam now. WIll be updating soon. RE is fun.
