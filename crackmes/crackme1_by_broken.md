@@ -251,3 +251,4 @@ Overall, this was a nice beginner-friendly Windows x86 reversing challenge: the 
 Focusing on Exam now. WIll be updating soon. RE is fun.
 Learning Asm & customizing my terminal using bash for now.
 Will be updating RE soon
+doing ctf for now.
